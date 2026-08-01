@@ -35,6 +35,10 @@ export const defaultAgents = [
   {
     id: "opencode",
     name: "OpenCode",
+    env: [
+      { name: "OPENCODE", value: "1" },
+      { name: "OPENCODE_PID" }
+    ],
     process: [{ pattern: /^opencode$/i }]
   },
   {
