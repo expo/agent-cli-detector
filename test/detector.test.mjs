@@ -94,6 +94,18 @@ test("detects bolt from any known environment variable", () => {
   }
 });
 
+test("detects opencode from any known environment variable", () => {
+  for (const env of [{ OPENCODE: "1" }, { OPENCODE_PID: "12345" }]) {
+    const result = detectAgent({ env });
+
+    assert.equal(result.detected, true);
+    assert.deepEqual(result.agent, {
+      id: "opencode",
+      name: "OpenCode"
+    });
+  }
+});
+
 test("default strategies only use environment variables", () => {
   assert.deepEqual(
     createDefaultStrategies().map((strategy) => strategy.name),
