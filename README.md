@@ -53,6 +53,9 @@ Officially supported coding agents:
 Detection is data-driven: the exact environment variables and process
 patterns for each agent live in [`src/agents.ts`](src/agents.ts).
 
+OpenCode 1.0.19 and later is detected from environment variables by default.
+OpenCode 0.x requires experimental process-tree detection.
+
 ## API
 
 ### `detectAgent([options])`
