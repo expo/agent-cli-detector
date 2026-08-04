@@ -52,10 +52,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/davidmokos/detect-agent.git"
+    "url": "git+https://github.com/expo/agent-cli-detector.git"
   },
   "bugs": {
-    "url": "https://github.com/davidmokos/detect-agent/issues"
+    "url": "https://github.com/expo/agent-cli-detector/issues"
   },
-  "homepage": "https://github.com/davidmokos/detect-agent#readme"
+  "homepage": "https://github.com/expo/agent-cli-detector#readme"
 }
