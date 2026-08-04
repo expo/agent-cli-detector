@@ -2,11 +2,11 @@
 
 Detect whether a JavaScript CLI is running inside a coding agent.
 
-Please [open an issue](https://github.com/davidmokos/detect-agent/issues/new)
+Please [open an issue](https://github.com/expo/agent-cli-detector/issues/new)
 if your coding agent isn't properly detected :)
 
 [![npm](https://img.shields.io/npm/v/agent-cli-detector.svg)](https://www.npmjs.com/package/agent-cli-detector)
-[![Tests](https://github.com/davidmokos/detect-agent/actions/workflows/test.yml/badge.svg)](https://github.com/davidmokos/detect-agent/actions)
+[![Tests](https://github.com/expo/agent-cli-detector/actions/workflows/test.yml/badge.svg)](https://github.com/expo/agent-cli-detector/actions)
 
 ## Installation
 
