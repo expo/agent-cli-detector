@@ -1,5 +1,6 @@
 import { defaultAgents } from "./agents.js";
 import { EnvironmentDetectionStrategy } from "./strategies/environment.js";
+import { FileSystemDetectionStrategy } from "./strategies/filesystem.js";
 import { ProcessTreeDetectionStrategy } from "./strategies/process-tree.js";
 import type {
   AgentDefinition,
@@ -14,8 +15,9 @@ import type {
 export function detectAgent(options: DetectAgentOptions = {}): DetectionResult {
   const agents = options.agents ?? defaultAgents;
   const strategies = options.strategies ?? defaultStrategies(options.experimentalProcessTree);
+  const env = options.env ?? process.env;
   const context: DetectionContext = {
-    env: options.env ?? process.env,
+    env,
     pid: options.pid ?? process.pid,
     agents,
     maxProcessDepth: options.maxProcessDepth ?? 20
@@ -45,7 +47,10 @@ export function createDefaultStrategies(experimentalProcessTree = false): readon
 }
 
 function defaultStrategies(experimentalProcessTree = false): readonly DetectionStrategy[] {
-  const strategies: DetectionStrategy[] = [new EnvironmentDetectionStrategy()];
+  const strategies: DetectionStrategy[] = [
+    new EnvironmentDetectionStrategy(),
+    new FileSystemDetectionStrategy()
+  ];
 
   if (experimentalProcessTree) {
     strategies.push(new ProcessTreeDetectionStrategy());
@@ -59,6 +64,19 @@ function selectBestAgent(
   matches: readonly DetectionEvidence[],
   env: NodeJS.ProcessEnv
 ): DetectedAgent | undefined {
+  const explicitMatch = matches.find(
+    (match) => match.strategy === "environment" && match.signal === "AI_AGENT"
+  );
+
+  if (explicitMatch !== undefined) {
+    const definition = agents.find((agent) => agent.id === explicitMatch.agent.id);
+
+    return {
+      ...explicitMatch.agent,
+      ...(definition === undefined ? {} : sessionIdProperties(definition, env))
+    };
+  }
+
   const matchedAgentIds = new Set(matches.map((match) => match.agent.id));
 
   for (const agent of agents) {

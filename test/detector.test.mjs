@@ -4,8 +4,52 @@ import {
   createDefaultStrategies,
   detectAgent,
   EnvironmentDetectionStrategy,
+  FileSystemDetectionStrategy,
   ProcessTreeDetectionStrategy
 } from "../dist/index.js";
+
+test("AI_AGENT takes priority and supports custom agent names", () => {
+  const result = detectAgent({
+    env: {
+      AI_AGENT: "  my-custom-agent@1  ",
+      CODEX_CI: "1"
+    }
+  });
+
+  assert.deepEqual(result, {
+    detected: true,
+    agent: {
+      id: "my-custom-agent@1",
+      name: "my-custom-agent@1"
+    }
+  });
+});
+
+test("AI_AGENT aliases normalize to stable package ids", () => {
+  for (const [value, id] of [
+    ["claude", "claude-code"],
+    ["cursor-cli", "cursor"],
+    ["github-copilot", "copilot"],
+    ["github-copilot-cli", "copilot"]
+  ]) {
+    const result = detectAgent({ env: { AI_AGENT: value } });
+
+    assert.equal(result.detected, true);
+    assert.equal(result.agent.id, id);
+  }
+});
+
+test("ignores an empty AI_AGENT override", () => {
+  const result = detectAgent({
+    env: {
+      AI_AGENT: "   ",
+      CODEX_CI: "1"
+    }
+  });
+
+  assert.equal(result.detected, true);
+  assert.equal(result.agent.id, "codex");
+});
 
 test("detects an agent from a strong environment variable", () => {
   const result = detectAgent({
@@ -78,6 +122,64 @@ test("detects rork from RORK_API_URL", () => {
   });
 });
 
+test("detects the additional agent environment signals", () => {
+  for (const [env, id] of [
+    [{ CODEX_SANDBOX: "seatbelt" }, "codex"],
+    [{ CURSOR_TRACE_ID: "trace-123" }, "cursor"],
+    [{ CURSOR_EXTENSION_HOST_ROLE: "agent-exec" }, "cursor"],
+    [{ CLAUDE_CODE: "1" }, "claude-code"],
+    [{ OPENCODE_CLIENT: "opencode" }, "opencode"],
+    [{ AUGMENT_AGENT: "1" }, "augment-cli"],
+    [{ COPILOT_MODEL: "gpt-5" }, "copilot"],
+    [{ COPILOT_ALLOW_ALL: "true" }, "copilot"],
+    [{ COPILOT_GITHUB_TOKEN: "token" }, "copilot"]
+  ]) {
+    const result = detectAgent({ env });
+
+    assert.equal(result.detected, true);
+    assert.equal(result.agent.id, id);
+  }
+});
+
+test("distinguishes Claude Cowork from Claude Code", () => {
+  const result = detectAgent({
+    env: {
+      CLAUDE_CODE: "1",
+      CLAUDE_CODE_IS_COWORK: "1",
+      CLAUDE_CODE_SESSION_ID: "session-123"
+    }
+  });
+
+  assert.deepEqual(result, {
+    detected: true,
+    agent: {
+      id: "cowork",
+      name: "Claude Cowork",
+      sessionId: "session-123"
+    }
+  });
+});
+
+test("does not detect Cowork from its discriminator alone", () => {
+  const result = detectAgent({
+    env: {
+      CLAUDE_CODE_IS_COWORK: "1"
+    }
+  });
+
+  assert.equal(result.detected, false);
+});
+
+test("detects v0 through the AI_AGENT standard", () => {
+  const result = detectAgent({ env: { AI_AGENT: "v0" } });
+
+  assert.equal(result.detected, true);
+  assert.deepEqual(result.agent, {
+    id: "v0",
+    name: "v0"
+  });
+});
+
 test("detects bolt from any known environment variable", () => {
   for (const envName of ["BOLT_ENV", "BOLT_ORIGIN", "BOLT_SERVER_URL"]) {
     const result = detectAgent({
@@ -106,18 +208,41 @@ test("detects opencode from any known environment variable", () => {
   }
 });
 
-test("default strategies only use environment variables", () => {
+test("default strategies use environment and filesystem signals", () => {
   assert.deepEqual(
     createDefaultStrategies().map((strategy) => strategy.name),
-    ["environment"]
+    ["environment", "filesystem"]
   );
 });
 
 test("process tree strategy is experimental and opt-in", () => {
   assert.deepEqual(
     createDefaultStrategies(true).map((strategy) => strategy.name),
-    ["environment", "process-tree"]
+    ["environment", "filesystem", "process-tree"]
   );
+});
+
+test("filesystem detection can detect Devin's local marker", () => {
+  const strategy = new FileSystemDetectionStrategy({
+    exists(path) {
+      return path === "/opt/.devin";
+    }
+  });
+  const result = detectAgent({ env: {}, strategies: [strategy] });
+
+  assert.equal(result.detected, true);
+  assert.equal(result.agent.id, "devin");
+});
+
+test("filesystem detection treats reader errors as a miss", () => {
+  const strategy = new FileSystemDetectionStrategy({
+    exists() {
+      throw new Error("permission denied");
+    }
+  });
+  const result = detectAgent({ env: {}, strategies: [strategy] });
+
+  assert.equal(result.detected, false);
 });
 
 test("process tree detection can detect kiro in the hierarchy", () => {
@@ -149,11 +274,36 @@ test("does not detect unrelated environment variables", () => {
   const result = detectAgent({
     env: {
       PATH: "/usr/bin"
-    }
+    },
+    strategies: [new EnvironmentDetectionStrategy()]
   });
 
   assert.equal(result.detected, false);
   assert.equal(result.agent, undefined);
+});
+
+test("does not treat empty signal values as agent evidence", () => {
+  const result = detectAgent({
+    env: {
+      CODEX_SANDBOX: "",
+      CURSOR_TRACE_ID: "",
+      OPENCODE_CLIENT: ""
+    },
+    strategies: [new EnvironmentDetectionStrategy()]
+  });
+
+  assert.equal(result.detected, false);
+});
+
+test("does not treat a generic Replit workspace as an agent session", () => {
+  const result = detectAgent({
+    env: {
+      REPL_ID: "application-uuid"
+    },
+    strategies: [new EnvironmentDetectionStrategy()]
+  });
+
+  assert.equal(result.detected, false);
 });
 
 test("process tree detection can detect opencode without env vars", () => {
