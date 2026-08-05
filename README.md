@@ -35,8 +35,10 @@ Officially supported coding agents:
 | Name                                                              | ID            | Session ID |
 | ----------------------------------------------------------------- | ------------- | ---------- |
 | [Antigravity](https://antigravity.google/)                        | `antigravity` | ✅         |
+| [Augment CLI](https://www.augmentcode.com/product/cli)            | `augment-cli` | 🚫         |
 | [Bolt](https://bolt.new/)                                          | `bolt`        | 🚫         |
 | [Claude Code](https://claude.com/claude-code)                     | `claude-code` | ✅         |
+| [Claude Cowork](https://claude.com/product/cowork)                | `cowork`      | ✅         |
 | [Cline](https://cline.bot/)                                       | `cline`       | 🚫         |
 | [Codex](https://developers.openai.com/codex/)                     | `codex`       | ✅         |
 | [Cursor](https://cursor.com/)                                     | `cursor`      | ✅         |
@@ -49,12 +51,15 @@ Officially supported coding agents:
 | [Pi](https://github.com/badlogic/pi-mono)                         | `pi`          | 🚫         |
 | [Replit](https://replit.com/)                                      | `replit`      | ✅         |
 | [Rork](https://rork.com/)                                          | `rork`        | 🚫         |
+| [v0](https://v0.app/)                                               | `v0`          | 🚫         |
 
-Detection is data-driven: the exact environment variables and process
-patterns for each agent live in [`src/agents.ts`](src/agents.ts).
+Agent-specific detection is data-driven: the environment variables, filesystem
+markers, and process patterns live in [`src/agents.ts`](src/agents.ts).
 
-OpenCode 1.0.19 and later is detected from environment variables by default.
-OpenCode 0.x requires experimental process-tree detection.
+The package recognizes `AI_AGENT` as an explicit, highest-priority agent name.
+Known aliases such as `claude`, `cursor-cli`, `github-copilot`, and
+`github-copilot-cli` are normalized to the stable IDs in the table. Other
+non-empty values are returned verbatim as both the agent ID and name.
 
 ## API
 
@@ -98,7 +103,7 @@ A string containing the agent's session identifier, normalized from
 agent-specific environment variables such as `CODEX_THREAD_ID`,
 `CURSOR_CONVERSATION_ID`, `CLAUDE_CODE_SESSION_ID`,
 `ANTIGRAVITY_TRAJECTORY_ID`, `KIRO_SESSION_ID`, `KILO_RUN_ID`, and
-`COPILOT_AGENT_SESSION_ID`, and `REPLIT_SESSION`. Omitted when the agent doesn't expose one
+`COPILOT_AGENT_SESSION_ID`, or `REPLIT_SESSION`. Omitted when the agent doesn't expose one
 (see the Session ID column in the support table above).
 
 ### `isRunningFromAgent([options])`
@@ -129,7 +134,8 @@ Exit codes:
 
 ## Process-tree detection (experimental)
 
-Detection uses environment variables by default. Parent-process
+Detection uses environment variables and Devin's `/opt/.devin` marker by
+default. Parent-process
 inspection is available as an opt-in for callers that can tolerate
 best-effort process-tree matching:
 
@@ -154,7 +160,9 @@ const result = detectAgent({
     {
       id: "my-agent",
       name: "My Agent",
+      aliases: ["my-agent-cli"],
       env: [{ name: "MY_AGENT", value: "1" }],
+      filesystem: [{ path: "/opt/my-agent" }],
       process: [{ pattern: /^my-agent$/i }]
     }
   ]

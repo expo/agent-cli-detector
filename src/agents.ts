@@ -6,6 +6,7 @@ export const defaultAgents = [
     name: "Codex",
     env: [
       { name: "CODEX_CI", value: "1" },
+      { name: "CODEX_SANDBOX" },
       { name: "CODEX_SHELL", value: "1" },
       { name: "CODEX_THREAD_ID" }
     ],
@@ -15,18 +16,34 @@ export const defaultAgents = [
   {
     id: "cursor",
     name: "Cursor",
+    aliases: ["cursor-cli"],
     env: [
       { name: "CURSOR_AGENT", value: "1" },
-      { name: "CURSOR_CONVERSATION_ID" }
+      { name: "CURSOR_CONVERSATION_ID" },
+      { name: "CURSOR_EXTENSION_HOST_ROLE", value: "agent-exec" },
+      { name: "CURSOR_TRACE_ID" }
     ],
     process: [{ pattern: /^cursor$/i }],
     sessionEnv: ["CURSOR_CONVERSATION_ID"]
   },
   {
+    id: "cowork",
+    name: "Claude Cowork",
+    env: [
+      {
+        name: "CLAUDE_CODE_IS_COWORK",
+        condition: (env) => Boolean(env.CLAUDECODE || env.CLAUDE_CODE)
+      }
+    ],
+    sessionEnv: ["CLAUDE_CODE_SESSION_ID"]
+  },
+  {
     id: "claude-code",
     name: "Claude Code",
+    aliases: ["claude"],
     env: [
       { name: "CLAUDECODE", value: "1" },
+      { name: "CLAUDE_CODE" },
       { name: "CLAUDE_CODE_SESSION_ID" }
     ],
     process: [{ pattern: /^claude$/i }],
@@ -37,6 +54,7 @@ export const defaultAgents = [
     name: "OpenCode",
     env: [
       { name: "OPENCODE", value: "1" },
+      { name: "OPENCODE_CLIENT" },
       { name: "OPENCODE_PID" }
     ],
     process: [{ pattern: /^opencode$/i }]
@@ -44,6 +62,7 @@ export const defaultAgents = [
   {
     id: "devin",
     name: "Devin",
+    filesystem: [{ path: "/opt/.devin" }],
     process: [{ pattern: /devin/i }]
   },
   {
@@ -61,6 +80,11 @@ export const defaultAgents = [
     ],
     process: [{ pattern: /^antigravity$/i }],
     sessionEnv: ["ANTIGRAVITY_TRAJECTORY_ID"]
+  },
+  {
+    id: "augment-cli",
+    name: "Augment CLI",
+    env: [{ name: "AUGMENT_AGENT" }]
   },
   {
     id: "bolt",
@@ -114,12 +138,20 @@ export const defaultAgents = [
   {
     id: "copilot",
     name: "GitHub Copilot CLI",
+    aliases: ["github-copilot", "github-copilot-cli"],
     env: [
       { name: "COPILOT_CLI", value: "1" },
       { name: "COPILOT_AGENT_SESSION_ID" },
-      { name: "COPILOT_RUN_APP", value: "1" }
+      { name: "COPILOT_RUN_APP", value: "1" },
+      { name: "COPILOT_MODEL" },
+      { name: "COPILOT_ALLOW_ALL", value: "true" },
+      { name: "COPILOT_GITHUB_TOKEN" }
     ],
     process: [{ pattern: /^(github-copilot-cli|copilot)$/i }],
     sessionEnv: ["COPILOT_AGENT_SESSION_ID"]
+  },
+  {
+    id: "v0",
+    name: "v0"
   }
 ] satisfies readonly AgentDefinition[];

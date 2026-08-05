@@ -6,6 +6,11 @@ export {
 } from "./detector.js";
 export { EnvironmentDetectionStrategy } from "./strategies/environment.js";
 export {
+  FileSystemDetectionStrategy,
+  NodeFileSystemReader,
+  type FileSystemReader
+} from "./strategies/filesystem.js";
+export {
   ProcessTreeDetectionStrategy,
   PsProcessReader,
   type ProcessReader
@@ -23,6 +28,7 @@ export type {
   DetectionStrategyName,
   EnvSignal,
   EnvValueMatcher,
+  FileSystemSignal,
   ProcessInfo,
   ProcessSignal
 } from "./types.js";

@@ -1,21 +1,24 @@
 export type AgentId =
   | "antigravity"
+  | "augment-cli"
   | "bolt"
+  | "claude-code"
   | "cline"
   | "codex"
   | "copilot"
+  | "cowork"
   | "cursor"
   | "devin"
   | "gemini"
   | "kiro"
   | "kilocode"
-  | "claude-code"
   | "opencode"
   | "pi"
   | "replit"
-  | "rork";
+  | "rork"
+  | "v0";
 
-export type DetectionStrategyName = "environment" | "process-tree";
+export type DetectionStrategyName = "environment" | "filesystem" | "process-tree";
 
 export type EnvValueMatcher =
   | string
@@ -25,6 +28,12 @@ export type EnvValueMatcher =
 export interface EnvSignal {
   readonly name: string;
   readonly value?: EnvValueMatcher;
+  readonly condition?: (env: NodeJS.ProcessEnv) => boolean;
+  readonly description?: string;
+}
+
+export interface FileSystemSignal {
+  readonly path: string;
   readonly description?: string;
 }
 
@@ -43,7 +52,9 @@ export interface DetectedAgent extends AgentIdentity {
 }
 
 export interface AgentDefinition extends AgentIdentity {
+  readonly aliases?: readonly string[];
   readonly env?: readonly EnvSignal[];
+  readonly filesystem?: readonly FileSystemSignal[];
   readonly process?: readonly ProcessSignal[];
   readonly sessionEnv?: readonly string[];
 }
