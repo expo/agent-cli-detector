@@ -78,6 +78,23 @@ test("detects rork from RORK_API_URL", () => {
   });
 });
 
+test("detects Muse Code from MUSE_RELEASE_INFO", () => {
+  const result = detectAgent({
+    env: {
+      MUSE_RELEASE_INFO: JSON.stringify({
+        channel: "muse-stable",
+        version: "0.1.0-R708.1"
+      })
+    }
+  });
+
+  assert.equal(result.detected, true);
+  assert.deepEqual(result.agent, {
+    id: "muse",
+    name: "Muse Code"
+  });
+});
+
 test("detects bolt from any known environment variable", () => {
   for (const envName of ["BOLT_ENV", "BOLT_ORIGIN", "BOLT_SERVER_URL"]) {
     const result = detectAgent({

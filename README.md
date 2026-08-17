@@ -45,10 +45,13 @@ Officially supported coding agents:
 | [GitHub Copilot CLI](https://github.com/github/copilot-cli)       | `copilot`     | ✅         |
 | [Kilo Code](https://kilocode.ai/)                                 | `kilocode`    | ✅         |
 | [Kiro](https://kiro.dev/)                                         | `kiro`        | ✅         |
+| [Muse Code][muse-code]                                            | `muse`        | 🚫         |
 | [OpenCode](https://opencode.ai/)                                  | `opencode`    | 🚫         |
 | [Pi](https://github.com/badlogic/pi-mono)                         | `pi`          | 🚫         |
 | [Replit](https://replit.com/)                                      | `replit`      | ✅         |
 | [Rork](https://rork.com/)                                          | `rork`        | 🚫         |
+
+[muse-code]: https://developer.meta.com/ai/products/muse-code/
 
 Detection is data-driven: the exact environment variables and process
 patterns for each agent live in [`src/agents.ts`](src/agents.ts).
