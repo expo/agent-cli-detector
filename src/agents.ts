@@ -95,6 +95,11 @@ export const defaultAgents = [
     sessionEnv: ["KIRO_SESSION_ID"]
   },
   {
+    id: "muse",
+    name: "Muse Code",
+    env: [{ name: "MUSE_RELEASE_INFO" }]
+  },
+  {
     id: "cline",
     name: "Cline",
     env: [{ name: "CLINE_WRAPPER_PATH" }],

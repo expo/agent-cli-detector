@@ -10,6 +10,7 @@ export type AgentId =
   | "kiro"
   | "kilocode"
   | "claude-code"
+  | "muse"
   | "opencode"
   | "pi"
   | "replit"
