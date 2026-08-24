@@ -53,6 +53,15 @@ export const defaultAgents = [
     process: [{ pattern: /^gemini$/i }]
   },
   {
+    id: "grok",
+    name: "Grok",
+    env: [
+      { name: "GROK_AGENT", value: "1" },
+      { name: "GROK_SESSION_ID" }
+    ],
+    sessionEnv: ["GROK_SESSION_ID"]
+  },
+  {
     id: "antigravity",
     name: "Antigravity",
     env: [
