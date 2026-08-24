@@ -64,6 +64,22 @@ test("detects replit and normalizes its session id", () => {
   });
 });
 
+test("detects grok and normalizes its session id", () => {
+  const result = detectAgent({
+    env: {
+      GROK_AGENT: "1",
+      GROK_SESSION_ID: "01a035a8-166c-7771-8e5e-f67e0dd98c83"
+    }
+  });
+
+  assert.equal(result.detected, true);
+  assert.deepEqual(result.agent, {
+    id: "grok",
+    name: "Grok",
+    sessionId: "01a035a8-166c-7771-8e5e-f67e0dd98c83"
+  });
+});
+
 test("detects rork from RORK_API_URL", () => {
   const result = detectAgent({
     env: {

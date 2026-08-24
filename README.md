@@ -43,6 +43,7 @@ Officially supported coding agents:
 | [Devin](https://devin.ai/)                                        | `devin`       | 🚫         |
 | [Gemini CLI](https://github.com/google-gemini/gemini-cli)         | `gemini`      | 🚫         |
 | [GitHub Copilot CLI](https://github.com/github/copilot-cli)       | `copilot`     | ✅         |
+| [Grok](https://x.ai/build)                                        | `grok`        | ✅         |
 | [Kilo Code](https://kilocode.ai/)                                 | `kilocode`    | ✅         |
 | [Kiro](https://kiro.dev/)                                         | `kiro`        | ✅         |
 | [Muse Code][muse-code]                                            | `muse`        | 🚫         |
@@ -101,7 +102,8 @@ A string containing the agent's session identifier, normalized from
 agent-specific environment variables such as `CODEX_THREAD_ID`,
 `CURSOR_CONVERSATION_ID`, `CLAUDE_CODE_SESSION_ID`,
 `ANTIGRAVITY_TRAJECTORY_ID`, `KIRO_SESSION_ID`, `KILO_RUN_ID`, and
-`COPILOT_AGENT_SESSION_ID`, and `REPLIT_SESSION`. Omitted when the agent doesn't expose one
+`COPILOT_AGENT_SESSION_ID`, `REPLIT_SESSION`, and `GROK_SESSION_ID`.
+Omitted when the agent doesn't expose one
 (see the Session ID column in the support table above).
 
 ### `isRunningFromAgent([options])`
