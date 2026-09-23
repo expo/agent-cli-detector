@@ -47,6 +47,11 @@ export const defaultAgents = [
     process: [{ pattern: /devin/i }]
   },
   {
+    id: "droid",
+    name: "Factory Droid",
+    env: [{ name: "FACTORY_ENV", value: "production" }]
+  },
+  {
     id: "gemini",
     name: "Gemini CLI",
     env: [{ name: "GEMINI_CLI", value: "1" }],

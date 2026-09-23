@@ -80,6 +80,20 @@ test("detects grok and normalizes its session id", () => {
   });
 });
 
+test("detects Factory Droid from FACTORY_ENV", () => {
+  const result = detectAgent({
+    env: {
+      FACTORY_ENV: "production"
+    }
+  });
+
+  assert.equal(result.detected, true);
+  assert.deepEqual(result.agent, {
+    id: "droid",
+    name: "Factory Droid"
+  });
+});
+
 test("detects rork from RORK_API_URL", () => {
   const result = detectAgent({
     env: {
