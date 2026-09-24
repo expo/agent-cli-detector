@@ -6,6 +6,7 @@ export type AgentId =
   | "copilot"
   | "cursor"
   | "devin"
+  | "droid"
   | "gemini"
   | "grok"
   | "kiro"

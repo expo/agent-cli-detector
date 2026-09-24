@@ -41,6 +41,7 @@ Officially supported coding agents:
 | [Codex](https://developers.openai.com/codex/)                     | `codex`       | ✅         |
 | [Cursor](https://cursor.com/)                                     | `cursor`      | ✅         |
 | [Devin](https://devin.ai/)                                        | `devin`       | 🚫         |
+| [Factory Droid](https://docs.factory.ai/droid-cli/overview)       | `droid`       | 🚫         |
 | [Gemini CLI](https://github.com/google-gemini/gemini-cli)         | `gemini`      | 🚫         |
 | [GitHub Copilot CLI](https://github.com/github/copilot-cli)       | `copilot`     | ✅         |
 | [Grok](https://x.ai/build)                                        | `grok`        | ✅         |
