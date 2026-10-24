@@ -80,6 +80,53 @@ test("detects grok and normalizes its session id", () => {
   });
 });
 
+test("detects Grok Bot from SAND_BOX_BOOT_ID and normalizes the conversation id", () => {
+  const result = detectAgent({
+    env: {
+      CURSOR_AGENT: "1",
+      CURSOR_CONVERSATION_ID: "conversation-123",
+      SAND_BOX_BOOT_ID: "boot-456"
+    }
+  });
+
+  assert.equal(result.detected, true);
+  assert.deepEqual(result.agent, {
+    id: "grok-bot",
+    name: "Grok Bot",
+    sessionId: "conversation-123"
+  });
+});
+
+test("detects cursor from CURSOR_AGENT without Grok Bot signals", () => {
+  const result = detectAgent({
+    env: {
+      CURSOR_AGENT: "1",
+      CURSOR_CONVERSATION_ID: "conversation-123"
+    }
+  });
+
+  assert.equal(result.detected, true);
+  assert.deepEqual(result.agent, {
+    id: "cursor",
+    name: "Cursor",
+    sessionId: "conversation-123"
+  });
+});
+
+test("detects Grok Bot from SAND_BOX_STORE_ID alone", () => {
+  const result = detectAgent({
+    env: {
+      SAND_BOX_STORE_ID: "store-789"
+    }
+  });
+
+  assert.equal(result.detected, true);
+  assert.deepEqual(result.agent, {
+    id: "grok-bot",
+    name: "Grok Bot"
+  });
+});
+
 test("detects Factory Droid from FACTORY_ENV", () => {
   const result = detectAgent({
     env: {

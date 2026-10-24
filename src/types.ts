@@ -9,6 +9,7 @@ export type AgentId =
   | "droid"
   | "gemini"
   | "grok"
+  | "grok-bot"
   | "kiro"
   | "kilocode"
   | "claude-code"

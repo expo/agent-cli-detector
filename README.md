@@ -45,6 +45,7 @@ Officially supported coding agents:
 | [Gemini CLI](https://github.com/google-gemini/gemini-cli)         | `gemini`      | 🚫         |
 | [GitHub Copilot CLI](https://github.com/github/copilot-cli)       | `copilot`     | ✅         |
 | [Grok](https://x.ai/build)                                        | `grok`        | ✅         |
+| [Grok Bot](https://x.ai/bot)                                      | `grok-bot`    | ✅         |
 | [Kilo Code](https://kilocode.ai/)                                 | `kilocode`    | ✅         |
 | [Kiro](https://kiro.dev/)                                         | `kiro`        | ✅         |
 | [Muse Code][muse-code]                                            | `muse`        | 🚫         |
