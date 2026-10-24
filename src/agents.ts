@@ -13,6 +13,15 @@ export const defaultAgents = [
     sessionEnv: ["CODEX_THREAD_ID"]
   },
   {
+    id: "grok-bot",
+    name: "Grok Bot",
+    env: [
+      { name: "SAND_BOX_BOOT_ID" },
+      { name: "SAND_BOX_STORE_ID" }
+    ],
+    sessionEnv: ["CURSOR_CONVERSATION_ID"]
+  },
+  {
     id: "cursor",
     name: "Cursor",
     env: [
