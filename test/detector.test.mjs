@@ -312,3 +312,42 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("Muse execution marker and boundaries", () => {
+  for (const env of [
+    { JARVIS_IS_ASSIGNED: "1" },
+    { JARVIS_IS_ASSIGNED: "0" },
+    { JARVIS_IS_ASSIGNED: "false" },
+    { JARVIS_IS_ASSIGNED: " " },
+    { JARVIS_TOOL_CALL_ID: "1" },
+    { JARVIS_TOOL_CALL_ID: "0" },
+    { JARVIS_TOOL_CALL_ID: "false" },
+    { JARVIS_TOOL_CALL_ID: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "meta-muse");
+  for (const env of [
+    {},
+    {},
+    { JARVIS_IS_ASSIGNED: "" },
+    {},
+    { JARVIS_TOOL_CALL_ID: "" },
+    { JARVIS_SESSION_ID: "synthetic" }
+  ])
+    assert.notEqual(detectAgent({ env }).agent?.id, "meta-muse");
+});
+
+test("Prefers native coding agents over inherited Muse markers", () => {
+  const markers = ["JARVIS_IS_ASSIGNED", "JARVIS_TOOL_CALL_ID"];
+  const nativeAgents = [
+    [{ CODEX_CI: "1" }, "codex"],
+    [{ CLAUDECODE: "1" }, "claude-code"],
+    [{ OPENCODE: "1" }, "opencode"],
+    [{ COPILOT_CLI: "1" }, "copilot"]
+  ];
+  for (const marker of markers) {
+    for (const [nativeEnv, expected] of nativeAgents) {
+      assert.equal(detectAgent({ env: { [marker]: "fixture", ...nativeEnv } }).agent?.id, expected);
+    }
+  }
+});

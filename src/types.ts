@@ -1,4 +1,5 @@
 export type AgentId =
+  | "meta-muse"
   | "antigravity"
   | "bolt"
   | "cline"
