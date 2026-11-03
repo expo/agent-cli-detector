@@ -2,6 +2,14 @@ import type { AgentDefinition } from "./types.js";
 
 export const defaultAgents = [
   {
+    id: "meta-muse",
+    name: "Muse",
+    env: [
+      { name: "JARVIS_IS_ASSIGNED", value: (value) => value.length > 0 },
+      { name: "JARVIS_TOOL_CALL_ID", value: (value) => value.length > 0 }
+    ]
+  },
+  {
     id: "codex",
     name: "Codex",
     env: [

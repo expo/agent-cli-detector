@@ -312,3 +312,27 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("Muse execution marker and boundaries", () => {
+  for (const env of [
+    { JARVIS_IS_ASSIGNED: "1" },
+    { JARVIS_IS_ASSIGNED: "0" },
+    { JARVIS_IS_ASSIGNED: "false" },
+    { JARVIS_IS_ASSIGNED: " " },
+    { JARVIS_TOOL_CALL_ID: "1" },
+    { JARVIS_TOOL_CALL_ID: "0" },
+    { JARVIS_TOOL_CALL_ID: "false" },
+    { JARVIS_TOOL_CALL_ID: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "meta-muse");
+  for (const env of [
+    {},
+    {},
+    { JARVIS_IS_ASSIGNED: "" },
+    {},
+    { JARVIS_TOOL_CALL_ID: "" },
+    { JARVIS_SESSION_ID: "synthetic" }
+  ])
+    assert.notEqual(detectAgent({ env }).agent?.id, "meta-muse");
+});
