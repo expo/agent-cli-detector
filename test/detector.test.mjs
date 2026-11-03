@@ -312,3 +312,16 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("Goose execution marker and boundaries", () => {
+  for (const env of [
+    { GOOSE_TERMINAL: "1" },
+    { GOOSE_TERMINAL: "0" },
+    { GOOSE_TERMINAL: "false" },
+    { GOOSE_TERMINAL: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "goose");
+  for (const env of [{}, {}, { GOOSE_TERMINAL: "" }])
+    assert.notEqual(detectAgent({ env }).agent?.id, "goose");
+});

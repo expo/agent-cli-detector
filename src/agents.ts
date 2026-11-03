@@ -2,6 +2,11 @@ import type { AgentDefinition } from "./types.js";
 
 export const defaultAgents = [
   {
+    id: "goose",
+    name: "Goose",
+    env: [{ name: "GOOSE_TERMINAL", value: (value) => value.length > 0 }]
+  },
+  {
     id: "codex",
     name: "Codex",
     env: [
