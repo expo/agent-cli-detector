@@ -312,3 +312,16 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("Qwen Code execution marker and boundaries", () => {
+  for (const env of [
+    { QWEN_CODE: "1" },
+    { QWEN_CODE: "0" },
+    { QWEN_CODE: "false" },
+    { QWEN_CODE: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "qwen-code");
+  for (const env of [{}, {}, { QWEN_CODE: "" }])
+    assert.notEqual(detectAgent({ env }).agent?.id, "qwen-code");
+});
