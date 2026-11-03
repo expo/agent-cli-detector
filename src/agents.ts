@@ -149,5 +149,20 @@ export const defaultAgents = [
     ],
     process: [{ pattern: /^(github-copilot-cli|copilot)$/i }],
     sessionEnv: ["COPILOT_AGENT_SESSION_ID"]
+  },
+  {
+    id: "instinct",
+    name: "Instinct",
+    env: [
+      { name: "INSTINCT_OUTER_TOOL_USE_ID", value: (value) => value.length > 0 },
+      {
+        name: "INSTINCT_OUTER_TOOL_USE_STARTED_AT",
+        value: (value) => value.length > 0
+      },
+      {
+        name: "INSTINCT_OUTER_TOOL_USE_TIMEOUT_SECONDS",
+        value: (value) => value.length > 0
+      }
+    ]
   }
 ] satisfies readonly AgentDefinition[];
