@@ -123,6 +123,14 @@ export const defaultAgents = [
     env: [{ name: "MUSE_RELEASE_INFO" }]
   },
   {
+    id: "roo-code",
+    name: "Roo Code",
+    env: [
+      { name: "ROO_ACTIVE", value: (value) => value.length > 0 },
+      { name: "ROO_CLI_RUNTIME", value: (value) => value.length > 0 }
+    ]
+  },
+  {
     id: "cline",
     name: "Cline",
     env: [{ name: "CLINE_WRAPPER_PATH" }],

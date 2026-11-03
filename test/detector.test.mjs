@@ -312,3 +312,38 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("Roo Code execution marker and boundaries", () => {
+  for (const env of [
+    { ROO_ACTIVE: "1" },
+    { ROO_ACTIVE: "0" },
+    { ROO_ACTIVE: "false" },
+    { ROO_ACTIVE: " " },
+    { ROO_CLI_RUNTIME: "1" },
+    { ROO_CLI_RUNTIME: "0" },
+    { ROO_CLI_RUNTIME: "false" },
+    { ROO_CLI_RUNTIME: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "roo-code");
+  for (const env of [{}, {}, { ROO_ACTIVE: "" }, {}, { ROO_CLI_RUNTIME: "" }])
+    assert.notEqual(detectAgent({ env }).agent?.id, "roo-code");
+});
+
+test("Preserves Roo precedence for selected native and compatibility markers", () => {
+  const markers = ["ROO_ACTIVE", "ROO_CLI_RUNTIME"];
+  const nativeAgents = [
+    [{ CODEX_CI: "1" }, "codex"],
+    [{ CLAUDECODE: "1" }, "claude-code"],
+    [{ OPENCODE: "1" }, "opencode"]
+  ];
+  for (const marker of markers) {
+    for (const [nativeEnv, expected] of nativeAgents) {
+      assert.equal(detectAgent({ env: { [marker]: "fixture", ...nativeEnv } }).agent?.id, expected);
+    }
+  }
+  for (const marker of markers) {
+    assert.equal(detectAgent({ env: { [marker]: "fixture", CLINE_WRAPPER_PATH: "fixture" } }).agent?.id, "roo-code");
+    assert.equal(detectAgent({ env: { [marker]: "fixture", COPILOT_CLI: "1" } }).agent?.id, "roo-code");
+  }
+});
