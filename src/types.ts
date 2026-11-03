@@ -1,4 +1,5 @@
 export type AgentId =
+  | "vtcode"
   | "antigravity"
   | "bolt"
   | "cline"
