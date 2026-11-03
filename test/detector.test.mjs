@@ -312,3 +312,26 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("Manus execution marker and boundaries", () => {
+  for (const env of [
+    { MANUS_ADDON_RUNTIME_SPEC_PATH: "1" },
+    { MANUS_ADDON_RUNTIME_SPEC_PATH: "0" },
+    { MANUS_ADDON_RUNTIME_SPEC_PATH: "false" },
+    { MANUS_ADDON_RUNTIME_SPEC_PATH: " " },
+    { MANUS_ADDON_RUNTIME_SPECS_REVISION: "1" },
+    { MANUS_ADDON_RUNTIME_SPECS_REVISION: "0" },
+    { MANUS_ADDON_RUNTIME_SPECS_REVISION: "false" },
+    { MANUS_ADDON_RUNTIME_SPECS_REVISION: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "manus");
+  for (const env of [
+    {},
+    {},
+    { MANUS_ADDON_RUNTIME_SPEC_PATH: "" },
+    {},
+    { MANUS_ADDON_RUNTIME_SPECS_REVISION: "" }
+  ])
+    assert.notEqual(detectAgent({ env }).agent?.id, "manus");
+});

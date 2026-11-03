@@ -2,6 +2,20 @@ import type { AgentDefinition } from "./types.js";
 
 export const defaultAgents = [
   {
+    id: "manus",
+    name: "Manus",
+    env: [
+      {
+        name: "MANUS_ADDON_RUNTIME_SPEC_PATH",
+        value: (value) => value.length > 0
+      },
+      {
+        name: "MANUS_ADDON_RUNTIME_SPECS_REVISION",
+        value: (value) => value.length > 0
+      }
+    ]
+  },
+  {
     id: "codex",
     name: "Codex",
     env: [
