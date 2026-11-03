@@ -2,6 +2,11 @@ import type { AgentDefinition } from "./types.js";
 
 export const defaultAgents = [
   {
+    id: "crush",
+    name: "Crush",
+    env: [{ name: "CRUSH", value: (value) => value.length > 0 }]
+  },
+  {
     id: "codex",
     name: "Codex",
     env: [
