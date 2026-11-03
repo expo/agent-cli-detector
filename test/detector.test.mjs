@@ -312,3 +312,37 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("Instinct execution marker and boundaries", () => {
+  for (const env of [
+    { INSTINCT_OUTER_TOOL_USE_ID: "1" },
+    { INSTINCT_OUTER_TOOL_USE_ID: "0" },
+    { INSTINCT_OUTER_TOOL_USE_ID: "false" },
+    { INSTINCT_OUTER_TOOL_USE_ID: " " },
+    { INSTINCT_OUTER_TOOL_USE_STARTED_AT: "1" },
+    { INSTINCT_OUTER_TOOL_USE_STARTED_AT: "0" },
+    { INSTINCT_OUTER_TOOL_USE_STARTED_AT: "false" },
+    { INSTINCT_OUTER_TOOL_USE_STARTED_AT: " " },
+    { INSTINCT_OUTER_TOOL_USE_TIMEOUT_SECONDS: "1" },
+    { INSTINCT_OUTER_TOOL_USE_TIMEOUT_SECONDS: "0" },
+    { INSTINCT_OUTER_TOOL_USE_TIMEOUT_SECONDS: "false" },
+    { INSTINCT_OUTER_TOOL_USE_TIMEOUT_SECONDS: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "instinct");
+  for (const env of [
+    {},
+    {},
+    { INSTINCT_OUTER_TOOL_USE_ID: "" },
+    {},
+    { INSTINCT_OUTER_TOOL_USE_STARTED_AT: "" },
+    {},
+    { INSTINCT_OUTER_TOOL_USE_TIMEOUT_SECONDS: "" }
+  ])
+    assert.notEqual(detectAgent({ env }).agent?.id, "instinct");
+  assert.equal(
+    detectAgent({ env: { INSTINCT_OUTER_TOOL_USE_ID: "1", CLAUDECODE: "1" } })
+      .agent?.id,
+    "claude-code"
+  );
+});
