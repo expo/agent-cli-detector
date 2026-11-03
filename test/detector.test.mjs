@@ -312,3 +312,33 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+test("DeepSeek non-empty 0", () =>
+  assert.equal(
+    detectAgent({ env: { DSH_SHELL: "1" } }).agent?.id,
+    "deepseek-harness"
+  ));
+test("DeepSeek non-empty 1", () =>
+  assert.equal(
+    detectAgent({ env: { DSH_SHELL: "0" } }).agent?.id,
+    "deepseek-harness"
+  ));
+test("DeepSeek non-empty 2", () =>
+  assert.equal(
+    detectAgent({ env: { DSH_SHELL: "false" } }).agent?.id,
+    "deepseek-harness"
+  ));
+test("DeepSeek non-empty 3", () =>
+  assert.equal(
+    detectAgent({ env: { DSH_SHELL: " " } }).agent?.id,
+    "deepseek-harness"
+  ));
+test("empty and configuration do not detect DeepSeek", () => {
+  for (const env of [{}, { DSH_SHELL: "" }, { DSH_HOME: "synthetic" }])
+    assert.equal(detectAgent({ env }).detected, false);
+});
+test("nested Claude takes precedence", () =>
+  assert.equal(
+    detectAgent({ env: { DSH_SHELL: "1", CLAUDECODE: "1" } }).agent.id,
+    "claude-code"
+  ));

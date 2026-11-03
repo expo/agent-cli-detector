@@ -1,4 +1,5 @@
 export type AgentId =
+  | "deepseek-harness"
   | "antigravity"
   | "bolt"
   | "cline"
