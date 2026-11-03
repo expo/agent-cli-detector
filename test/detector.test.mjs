@@ -312,3 +312,21 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("Kimi Code execution marker and boundaries", () => {
+  for (const env of [
+    { KIMI_PLUGIN_ROOT: "1" },
+    { KIMI_PLUGIN_ROOT: "0" },
+    { KIMI_PLUGIN_ROOT: "false" },
+    { KIMI_PLUGIN_ROOT: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "kimi");
+  for (const env of [
+    {},
+    {},
+    { KIMI_PLUGIN_ROOT: "" },
+    { KIMI_CODE_HOME: "synthetic" }
+  ])
+    assert.notEqual(detectAgent({ env }).agent?.id, "kimi");
+});
