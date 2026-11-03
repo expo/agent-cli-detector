@@ -1,4 +1,5 @@
 export type AgentId =
+  | "openclaw"
   | "antigravity"
   | "bolt"
   | "cline"
