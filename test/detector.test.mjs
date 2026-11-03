@@ -312,3 +312,16 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("QwenWork execution marker and boundaries", () => {
+  for (const env of [
+    { QODER_WORK_INTEGRATION_PRODUCT: "1" },
+    { QODER_WORK_INTEGRATION_PRODUCT: "0" },
+    { QODER_WORK_INTEGRATION_PRODUCT: "false" },
+    { QODER_WORK_INTEGRATION_PRODUCT: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "qwenwork");
+  for (const env of [{}, {}, { QODER_WORK_INTEGRATION_PRODUCT: "" }])
+    assert.notEqual(detectAgent({ env }).agent?.id, "qwenwork");
+});

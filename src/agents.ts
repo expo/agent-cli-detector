@@ -2,6 +2,16 @@ import type { AgentDefinition } from "./types.js";
 
 export const defaultAgents = [
   {
+    id: "qwenwork",
+    name: "QwenWork",
+    env: [
+      {
+        name: "QODER_WORK_INTEGRATION_PRODUCT",
+        value: (value) => value.length > 0
+      }
+    ]
+  },
+  {
     id: "codex",
     name: "Codex",
     env: [
