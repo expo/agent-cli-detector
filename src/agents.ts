@@ -2,6 +2,14 @@ import type { AgentDefinition } from "./types.js";
 
 export const defaultAgents = [
   {
+    id: "hermes-agent",
+    name: "Hermes Agent",
+    env: [
+      { name: "HERMES_SESSION_ID", value: (value) => value.length > 0 },
+      { name: "HERMES_AGENT", value: (value) => value.length > 0 }
+    ]
+  },
+  {
     id: "codex",
     name: "Codex",
     env: [

@@ -312,3 +312,26 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("Hermes Agent execution marker and boundaries", () => {
+  for (const env of [
+    { HERMES_SESSION_ID: "1" },
+    { HERMES_SESSION_ID: "0" },
+    { HERMES_SESSION_ID: "false" },
+    { HERMES_SESSION_ID: " " },
+    { HERMES_AGENT: "1" },
+    { HERMES_AGENT: "0" },
+    { HERMES_AGENT: "false" },
+    { HERMES_AGENT: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "hermes-agent");
+  for (const env of [
+    {},
+    {},
+    { HERMES_SESSION_ID: "" },
+    {},
+    { HERMES_AGENT: "" }
+  ])
+    assert.notEqual(detectAgent({ env }).agent?.id, "hermes-agent");
+});
