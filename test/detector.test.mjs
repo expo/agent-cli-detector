@@ -312,3 +312,20 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("Roo Code execution marker and boundaries", () => {
+  for (const env of [
+    { ROO_ACTIVE: "1" },
+    { ROO_ACTIVE: "0" },
+    { ROO_ACTIVE: "false" },
+    { ROO_ACTIVE: " " },
+    { ROO_CLI_RUNTIME: "1" },
+    { ROO_CLI_RUNTIME: "0" },
+    { ROO_CLI_RUNTIME: "false" },
+    { ROO_CLI_RUNTIME: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "roo-code");
+  for (const env of [{}, {}, { ROO_ACTIVE: "" }, {}, { ROO_CLI_RUNTIME: "" }])
+    assert.notEqual(detectAgent({ env }).agent?.id, "roo-code");
+});
