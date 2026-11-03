@@ -312,3 +312,16 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("VT Code execution marker and boundaries", () => {
+  for (const env of [
+    { VTCODE: "1" },
+    { VTCODE: "0" },
+    { VTCODE: "false" },
+    { VTCODE: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "vtcode");
+  for (const env of [{}, {}, { VTCODE: "" }])
+    assert.notEqual(detectAgent({ env }).agent?.id, "vtcode");
+});
