@@ -1,4 +1,5 @@
 export type AgentId =
+  | "hermes-agent"
   | "antigravity"
   | "bolt"
   | "cline"
