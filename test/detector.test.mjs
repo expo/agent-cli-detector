@@ -325,3 +325,18 @@ test("OpenClaw execution marker and boundaries", () => {
   for (const env of [{}, {}, { OPENCLAW_SHELL: "" }])
     assert.notEqual(detectAgent({ env }).agent?.id, "openclaw");
 });
+
+test("Prefers native coding agents over inherited OpenClaw markers", () => {
+  const markers = ["OPENCLAW_SHELL"];
+  const nativeAgents = [
+    [{ CODEX_CI: "1" }, "codex"],
+    [{ CLAUDECODE: "1" }, "claude-code"],
+    [{ OPENCODE: "1" }, "opencode"],
+    [{ COPILOT_CLI: "1" }, "copilot"]
+  ];
+  for (const marker of markers) {
+    for (const [nativeEnv, expected] of nativeAgents) {
+      assert.equal(detectAgent({ env: { [marker]: "fixture", ...nativeEnv } }).agent?.id, expected);
+    }
+  }
+});
