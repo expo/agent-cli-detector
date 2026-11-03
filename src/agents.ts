@@ -149,5 +149,13 @@ export const defaultAgents = [
     ],
     process: [{ pattern: /^(github-copilot-cli|copilot)$/i }],
     sessionEnv: ["COPILOT_AGENT_SESSION_ID"]
+  },
+  {
+    id: "workbuddy",
+    name: "WorkBuddy",
+    env: [
+      { name: "WORKBUDDY_APPLICATION_NAME", value: (value) => value.length > 0 },
+      { name: "WORKBUDDY_APP_NAME", value: (value) => value.length > 0 }
+    ]
   }
 ] satisfies readonly AgentDefinition[];

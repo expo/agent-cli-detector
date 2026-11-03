@@ -312,3 +312,41 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("WorkBuddy execution marker and boundaries", () => {
+  for (const env of [
+    { WORKBUDDY_APPLICATION_NAME: "1" },
+    { WORKBUDDY_APPLICATION_NAME: "0" },
+    { WORKBUDDY_APPLICATION_NAME: "false" },
+    { WORKBUDDY_APPLICATION_NAME: " " },
+    { WORKBUDDY_APP_NAME: "1" },
+    { WORKBUDDY_APP_NAME: "0" },
+    { WORKBUDDY_APP_NAME: "false" },
+    { WORKBUDDY_APP_NAME: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "workbuddy");
+  for (const env of [
+    {},
+    {},
+    { WORKBUDDY_APPLICATION_NAME: "" },
+    {},
+    { WORKBUDDY_APP_NAME: "" }
+  ])
+    assert.notEqual(detectAgent({ env }).agent?.id, "workbuddy");
+});
+
+test("Prefers native coding agents over inherited WorkBuddy markers", () => {
+  const markers = ["WORKBUDDY_APPLICATION_NAME", "WORKBUDDY_APP_NAME"];
+  const nativeAgents = [
+    [{ CODEX_CI: "1" }, "codex"],
+    [{ CLAUDECODE: "1" }, "claude-code"],
+    [{ OPENCODE: "1" }, "opencode"],
+    [{ COPILOT_CLI: "1" }, "copilot"]
+  ];
+  for (const marker of markers) {
+    for (const [nativeEnv, expected] of nativeAgents) {
+      assert.equal(detectAgent({ env: { [marker]: "fixture", ...nativeEnv } }).agent?.id, expected);
+    }
+  }
+});
