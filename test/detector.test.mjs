@@ -312,3 +312,21 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("Junie execution marker and boundaries", () => {
+  for (const env of [
+    { JUNIE_SHIM_PATH: "1" },
+    { JUNIE_SHIM_PATH: "0" },
+    { JUNIE_SHIM_PATH: "false" },
+    { JUNIE_SHIM_PATH: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "junie");
+  for (const env of [
+    {},
+    {},
+    { JUNIE_SHIM_PATH: "" },
+    { JUNIE_DATA: "synthetic" }
+  ])
+    assert.notEqual(detectAgent({ env }).agent?.id, "junie");
+});

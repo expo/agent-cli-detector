@@ -1,4 +1,5 @@
 export type AgentId =
+  | "junie"
   | "antigravity"
   | "bolt"
   | "cline"

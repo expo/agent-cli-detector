@@ -2,6 +2,11 @@ import type { AgentDefinition } from "./types.js";
 
 export const defaultAgents = [
   {
+    id: "junie",
+    name: "Junie",
+    env: [{ name: "JUNIE_SHIM_PATH", value: (value) => value.length > 0 }]
+  },
+  {
     id: "codex",
     name: "Codex",
     env: [
