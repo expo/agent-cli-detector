@@ -2,20 +2,6 @@ import type { AgentDefinition } from "./types.js";
 
 export const defaultAgents = [
   {
-    id: "manus",
-    name: "Manus",
-    env: [
-      {
-        name: "MANUS_ADDON_RUNTIME_SPEC_PATH",
-        value: (value) => value.length > 0
-      },
-      {
-        name: "MANUS_ADDON_RUNTIME_SPECS_REVISION",
-        value: (value) => value.length > 0
-      }
-    ]
-  },
-  {
     id: "codex",
     name: "Codex",
     env: [
@@ -163,5 +149,19 @@ export const defaultAgents = [
     ],
     process: [{ pattern: /^(github-copilot-cli|copilot)$/i }],
     sessionEnv: ["COPILOT_AGENT_SESSION_ID"]
+  },
+  {
+    id: "manus",
+    name: "Manus",
+    env: [
+      {
+        name: "MANUS_ADDON_RUNTIME_SPEC_PATH",
+        value: (value) => value.length > 0
+      },
+      {
+        name: "MANUS_ADDON_RUNTIME_SPECS_REVISION",
+        value: (value) => value.length > 0
+      }
+    ]
   }
 ] satisfies readonly AgentDefinition[];
