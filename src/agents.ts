@@ -2,6 +2,14 @@ import type { AgentDefinition } from "./types.js";
 
 export const defaultAgents = [
   {
+    id: "cue",
+    name: "Cue",
+    env: [
+      { name: "MANUS_LONG_DESKTOP_WORKER", value: (value) => value.length > 0 },
+      { name: "MANUS_OPERATOR_PLATFORM", value: (value) => value.length > 0 }
+    ]
+  },
+  {
     id: "codex",
     name: "Codex",
     env: [

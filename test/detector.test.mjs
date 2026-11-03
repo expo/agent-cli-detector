@@ -312,3 +312,26 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("Cue execution marker and boundaries", () => {
+  for (const env of [
+    { MANUS_LONG_DESKTOP_WORKER: "1" },
+    { MANUS_LONG_DESKTOP_WORKER: "0" },
+    { MANUS_LONG_DESKTOP_WORKER: "false" },
+    { MANUS_LONG_DESKTOP_WORKER: " " },
+    { MANUS_OPERATOR_PLATFORM: "1" },
+    { MANUS_OPERATOR_PLATFORM: "0" },
+    { MANUS_OPERATOR_PLATFORM: "false" },
+    { MANUS_OPERATOR_PLATFORM: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "cue");
+  for (const env of [
+    {},
+    {},
+    { MANUS_LONG_DESKTOP_WORKER: "" },
+    {},
+    { MANUS_OPERATOR_PLATFORM: "" }
+  ])
+    assert.notEqual(detectAgent({ env }).agent?.id, "cue");
+});
