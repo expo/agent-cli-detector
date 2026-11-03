@@ -109,9 +109,9 @@ test("packed package can be installed, imported, and run as a CLI", () => {
     const cliOutput = execFileSync(process.execPath, [binPath, "--json"], {
       cwd: workspace,
       env: {
-        ...process.env,
-        CODEX_CI: "1",
-        CODEX_THREAD_ID: ""
+        PATH: process.env.PATH,
+        ...(process.platform === "win32" ? { SystemRoot: process.env.SystemRoot } : {}),
+        CODEX_CI: "1"
       },
       encoding: "utf8"
     });
