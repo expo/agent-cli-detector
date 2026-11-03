@@ -51,11 +51,6 @@ export const defaultAgents = [
     process: [{ pattern: /^opencode$/i }]
   },
   {
-    id: "devin",
-    name: "Devin",
-    process: [{ pattern: /devin/i }]
-  },
-  {
     id: "droid",
     name: "Factory Droid",
     env: [{ name: "FACTORY_ENV", value: "production" }]
@@ -149,5 +144,14 @@ export const defaultAgents = [
     ],
     process: [{ pattern: /^(github-copilot-cli|copilot)$/i }],
     sessionEnv: ["COPILOT_AGENT_SESSION_ID"]
+  },
+  {
+    id: "devin",
+    name: "Devin",
+    env: [
+      { name: "DEVIN_DIR", value: (value) => value.length > 0 },
+      { name: "DEVIN_DISABLE_HISTEXPAND", value: (value) => value.length > 0 }
+    ],
+    process: [{ pattern: /devin/i }]
   }
 ] satisfies readonly AgentDefinition[];
