@@ -312,3 +312,26 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("WorkBuddy execution marker and boundaries", () => {
+  for (const env of [
+    { WORKBUDDY_APPLICATION_NAME: "1" },
+    { WORKBUDDY_APPLICATION_NAME: "0" },
+    { WORKBUDDY_APPLICATION_NAME: "false" },
+    { WORKBUDDY_APPLICATION_NAME: " " },
+    { WORKBUDDY_APP_NAME: "1" },
+    { WORKBUDDY_APP_NAME: "0" },
+    { WORKBUDDY_APP_NAME: "false" },
+    { WORKBUDDY_APP_NAME: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "workbuddy");
+  for (const env of [
+    {},
+    {},
+    { WORKBUDDY_APPLICATION_NAME: "" },
+    {},
+    { WORKBUDDY_APP_NAME: "" }
+  ])
+    assert.notEqual(detectAgent({ env }).agent?.id, "workbuddy");
+});
