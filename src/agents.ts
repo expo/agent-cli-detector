@@ -2,14 +2,6 @@ import type { AgentDefinition } from "./types.js";
 
 export const defaultAgents = [
   {
-    id: "roo-code",
-    name: "Roo Code",
-    env: [
-      { name: "ROO_ACTIVE", value: (value) => value.length > 0 },
-      { name: "ROO_CLI_RUNTIME", value: (value) => value.length > 0 }
-    ]
-  },
-  {
     id: "codex",
     name: "Codex",
     env: [
@@ -129,6 +121,14 @@ export const defaultAgents = [
     id: "muse",
     name: "Muse Code",
     env: [{ name: "MUSE_RELEASE_INFO" }]
+  },
+  {
+    id: "roo-code",
+    name: "Roo Code",
+    env: [
+      { name: "ROO_ACTIVE", value: (value) => value.length > 0 },
+      { name: "ROO_CLI_RUNTIME", value: (value) => value.length > 0 }
+    ]
   },
   {
     id: "cline",
