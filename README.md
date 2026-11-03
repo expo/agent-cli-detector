@@ -53,6 +53,7 @@ Officially supported coding agents:
 | [Pi](https://github.com/badlogic/pi-mono)                         | `pi`          | 🚫         |
 | [Replit](https://replit.com/)                                      | `replit`      | ✅         |
 | [Rork](https://rork.com/)                                          | `rork`        | 🚫         |
+| [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) | `deepseek-harness` | 🚫 |
 
 [muse-code]: https://developer.meta.com/ai/products/muse-code/
 
