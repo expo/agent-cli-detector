@@ -2,6 +2,13 @@ import type { AgentDefinition } from "./types.js";
 
 export const defaultAgents = [
   {
+    id: "doubao-work",
+    name: "Doubao Work",
+    env: [
+      { name: "DOUBAO_OFFICE_AGENT_NAME", value: (value) => value.length > 0 }
+    ]
+  },
+  {
     id: "codex",
     name: "Codex",
     env: [
