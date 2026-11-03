@@ -312,3 +312,16 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("OpenClaw execution marker and boundaries", () => {
+  for (const env of [
+    { OPENCLAW_SHELL: "1" },
+    { OPENCLAW_SHELL: "0" },
+    { OPENCLAW_SHELL: "false" },
+    { OPENCLAW_SHELL: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "openclaw");
+  for (const env of [{}, {}, { OPENCLAW_SHELL: "" }])
+    assert.notEqual(detectAgent({ env }).agent?.id, "openclaw");
+});
