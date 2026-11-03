@@ -312,3 +312,31 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("Doubao Work execution marker and boundaries", () => {
+  for (const env of [
+    { DOUBAO_OFFICE_AGENT_NAME: "1" },
+    { DOUBAO_OFFICE_AGENT_NAME: "0" },
+    { DOUBAO_OFFICE_AGENT_NAME: "false" },
+    { DOUBAO_OFFICE_AGENT_NAME: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "doubao-work");
+  for (const env of [{}, {}, { DOUBAO_OFFICE_AGENT_NAME: "" }])
+    assert.notEqual(detectAgent({ env }).agent?.id, "doubao-work");
+});
+
+test("Prefers native coding agents over inherited Doubao Work markers", () => {
+  const markers = ["DOUBAO_OFFICE_AGENT_NAME"];
+  const nativeAgents = [
+    [{ CODEX_CI: "1" }, "codex"],
+    [{ CLAUDECODE: "1" }, "claude-code"],
+    [{ OPENCODE: "1" }, "opencode"],
+    [{ COPILOT_CLI: "1" }, "copilot"]
+  ];
+  for (const marker of markers) {
+    for (const [nativeEnv, expected] of nativeAgents) {
+      assert.equal(detectAgent({ env: { [marker]: "fixture", ...nativeEnv } }).agent?.id, expected);
+    }
+  }
+});

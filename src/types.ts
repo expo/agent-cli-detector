@@ -1,4 +1,5 @@
 export type AgentId =
+  | "doubao-work"
   | "antigravity"
   | "bolt"
   | "cline"
