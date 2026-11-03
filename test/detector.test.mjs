@@ -312,3 +312,16 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("Crush execution marker and boundaries", () => {
+  for (const env of [
+    { CRUSH: "1" },
+    { CRUSH: "0" },
+    { CRUSH: "false" },
+    { CRUSH: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "crush");
+  for (const env of [{}, {}, { CRUSH: "" }])
+    assert.notEqual(detectAgent({ env }).agent?.id, "crush");
+});
