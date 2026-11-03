@@ -312,3 +312,16 @@ test("custom agents can be added without custom detector code", () => {
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
 });
+
+
+test("TRAE execution marker and boundaries", () => {
+  for (const env of [
+    { TRAE_AI_SHELL_ID: "1" },
+    { TRAE_AI_SHELL_ID: "0" },
+    { TRAE_AI_SHELL_ID: "false" },
+    { TRAE_AI_SHELL_ID: " " }
+  ])
+    assert.equal(detectAgent({ env }).agent?.id, "trae");
+  for (const env of [{}, {}, { TRAE_AI_SHELL_ID: "" }])
+    assert.notEqual(detectAgent({ env }).agent?.id, "trae");
+});
