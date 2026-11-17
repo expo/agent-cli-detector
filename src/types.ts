@@ -4,6 +4,7 @@ export type AgentId =
   | "cline"
   | "codex"
   | "copilot"
+  | "cowork"
   | "cursor"
   | "devin"
   | "droid"

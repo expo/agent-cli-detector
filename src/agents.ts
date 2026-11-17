@@ -32,6 +32,12 @@ export const defaultAgents = [
     sessionEnv: ["CURSOR_CONVERSATION_ID"]
   },
   {
+    id: "cowork",
+    name: "Claude Cowork",
+    env: [{ name: "CLAUDE_CODE_IS_COWORK" }],
+    sessionEnv: ["CLAUDE_CODE_SESSION_ID"]
+  },
+  {
     id: "claude-code",
     name: "Claude Code",
     env: [
