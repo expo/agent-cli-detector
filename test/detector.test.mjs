@@ -205,6 +205,36 @@ test("detects Muse Code from MUSE_RELEASE_INFO", () => {
   });
 });
 
+test("detects Muse from JARVIS_HATCHLING_ID and normalizes its session id", () => {
+  const result = detectAgent({
+    env: {
+      JARVIS_HATCHLING_ID: "hatchling-123",
+      JARVIS_SESSION_ID: "session-456"
+    }
+  });
+
+  assert.equal(result.detected, true);
+  assert.deepEqual(result.agent, {
+    id: "muse-agent",
+    name: "Muse",
+    sessionId: "session-456"
+  });
+});
+
+test("detects Muse from HATCH_API_SOCKET alone", () => {
+  const result = detectAgent({
+    env: {
+      HATCH_API_SOCKET: "/run/hatch/daemon/http-api.sock"
+    }
+  });
+
+  assert.equal(result.detected, true);
+  assert.deepEqual(result.agent, {
+    id: "muse-agent",
+    name: "Muse"
+  });
+});
+
 test("detects bolt from any known environment variable", () => {
   for (const envName of ["BOLT_ENV", "BOLT_ORIGIN", "BOLT_SERVER_URL"]) {
     const result = detectAgent({
