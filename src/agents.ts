@@ -129,6 +129,15 @@ export const defaultAgents = [
     env: [{ name: "MUSE_RELEASE_INFO" }]
   },
   {
+    id: "muse-agent",
+    name: "Muse",
+    env: [
+      { name: "JARVIS_HATCHLING_ID" },
+      { name: "HATCH_API_SOCKET" }
+    ],
+    sessionEnv: ["JARVIS_SESSION_ID"]
+  },
+  {
     id: "cline",
     name: "Cline",
     env: [{ name: "CLINE_WRAPPER_PATH" }],

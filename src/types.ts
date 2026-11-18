@@ -15,6 +15,7 @@ export type AgentId =
   | "claude-code"
   | "claude-cowork"
   | "muse"
+  | "muse-agent"
   | "opencode"
   | "pi"
   | "replit"

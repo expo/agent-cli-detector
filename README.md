@@ -49,6 +49,7 @@ Officially supported coding agents:
 | [Grok Bot](https://x.ai/bot)                                      | `grok-bot`    | ✅         |
 | [Kilo Code](https://kilocode.ai/)                                 | `kilocode`    | ✅         |
 | [Kiro](https://kiro.dev/)                                         | `kiro`        | ✅         |
+| [Muse](https://muse.ai/)                                          | `muse-agent`  | ✅         |
 | [Muse Code][muse-code]                                            | `muse`        | 🚫         |
 | [OpenCode](https://opencode.ai/)                                  | `opencode`    | 🚫         |
 | [Pi](https://github.com/badlogic/pi-mono)                         | `pi`          | 🚫         |
@@ -105,7 +106,8 @@ A string containing the agent's session identifier, normalized from
 agent-specific environment variables such as `CODEX_THREAD_ID`,
 `CURSOR_CONVERSATION_ID`, `CLAUDE_CODE_SESSION_ID`,
 `ANTIGRAVITY_TRAJECTORY_ID`, `KIRO_SESSION_ID`, `KILO_RUN_ID`, and
-`COPILOT_AGENT_SESSION_ID`, `REPLIT_SESSION`, and `GROK_SESSION_ID`.
+`COPILOT_AGENT_SESSION_ID`, `REPLIT_SESSION`, `GROK_SESSION_ID`, and
+`JARVIS_SESSION_ID`.
 Omitted when the agent doesn't expose one
 (see the Session ID column in the support table above).
 
