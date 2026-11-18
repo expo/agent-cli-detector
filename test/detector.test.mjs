@@ -29,7 +29,7 @@ test("detects Claude Cowork before Claude Code and normalizes its session id", (
 
   assert.equal(result.detected, true);
   assert.deepEqual(result.agent, {
-    id: "cowork",
+    id: "claude-cowork",
     name: "Claude Cowork",
     sessionId: "session-123"
   });
