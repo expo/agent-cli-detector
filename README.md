@@ -37,6 +37,7 @@ Officially supported coding agents:
 | [Antigravity](https://antigravity.google/)                        | `antigravity` | ✅         |
 | [Bolt](https://bolt.new/)                                          | `bolt`        | 🚫         |
 | [Claude Code](https://claude.com/claude-code)                     | `claude-code` | ✅         |
+| [Claude Cowork](https://claude.com/product/cowork)                | `claude-cowork` | ✅         |
 | [Cline](https://cline.bot/)                                       | `cline`       | 🚫         |
 | [Codex](https://developers.openai.com/codex/)                     | `codex`       | ✅         |
 | [Cursor](https://cursor.com/)                                     | `cursor`      | ✅         |

@@ -18,6 +18,39 @@ test("detects an agent from a strong environment variable", () => {
   assert.equal(result.agent.id, "claude-code");
 });
 
+test("detects Claude Cowork before Claude Code and normalizes its session id", () => {
+  const result = detectAgent({
+    env: {
+      CLAUDECODE: "1",
+      CLAUDE_CODE_IS_COWORK: "1",
+      CLAUDE_CODE_SESSION_ID: "session-123"
+    }
+  });
+
+  assert.equal(result.detected, true);
+  assert.deepEqual(result.agent, {
+    id: "claude-cowork",
+    name: "Claude Cowork",
+    sessionId: "session-123"
+  });
+});
+
+test("detects Claude Code without Cowork signals", () => {
+  const result = detectAgent({
+    env: {
+      CLAUDECODE: "1",
+      CLAUDE_CODE_SESSION_ID: "session-123"
+    }
+  });
+
+  assert.equal(result.detected, true);
+  assert.deepEqual(result.agent, {
+    id: "claude-code",
+    name: "Claude Code",
+    sessionId: "session-123"
+  });
+});
+
 test("normalizes session ids across agent-specific environment variables", () => {
   const result = detectAgent({
     env: {
