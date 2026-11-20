@@ -58,11 +58,10 @@ Officially supported coding agents:
 
 [muse-code]: https://developer.meta.com/ai/products/muse-code/
 
-Detection is data-driven: the exact environment variables and process
-patterns for each agent live in [`src/agents.ts`](src/agents.ts).
+Detection is data-driven: the exact environment variables for each agent
+live in [`src/agents.ts`](src/agents.ts).
 
-OpenCode 1.0.19 and later is detected from environment variables by default.
-OpenCode 0.x requires experimental process-tree detection.
+OpenCode is detected from version 1.0.19.
 
 ## API
 
@@ -137,20 +136,6 @@ Exit codes:
 - `0`: a coding agent was detected
 - `1`: no coding agent was detected
 
-## Process-tree detection (experimental)
-
-Detection uses environment variables by default. Parent-process
-inspection is available as an opt-in for callers that can tolerate
-best-effort process-tree matching:
-
-```js
-const result = detectAgent({ experimentalProcessTree: true });
-```
-
-Some sandboxes block `ps`, and process names can vary by launcher, so
-process-tree detection should be treated as experimental. It has only
-been tested on macOS and does not work on Windows.
-
 ## Custom agents
 
 Add an agent by supplying an `AgentDefinition`:
@@ -164,8 +149,7 @@ const result = detectAgent({
     {
       id: "my-agent",
       name: "My Agent",
-      env: [{ name: "MY_AGENT", value: "1" }],
-      process: [{ pattern: /^my-agent$/i }]
+      env: [{ name: "MY_AGENT", value: "1" }]
     }
   ]
 });

@@ -1,6 +1,5 @@
 import { defaultAgents } from "./agents.js";
 import { EnvironmentDetectionStrategy } from "./strategies/environment.js";
-import { ProcessTreeDetectionStrategy } from "./strategies/process-tree.js";
 import type {
   AgentDefinition,
   DetectAgentOptions,
@@ -13,12 +12,10 @@ import type {
 
 export function detectAgent(options: DetectAgentOptions = {}): DetectionResult {
   const agents = options.agents ?? defaultAgents;
-  const strategies = options.strategies ?? defaultStrategies(options.experimentalProcessTree);
+  const strategies = options.strategies ?? createDefaultStrategies();
   const context: DetectionContext = {
     env: options.env ?? process.env,
-    pid: options.pid ?? process.pid,
-    agents,
-    maxProcessDepth: options.maxProcessDepth ?? 20
+    agents
   };
 
   const matches = strategies.flatMap((strategy) => strategy.detect(context));
@@ -40,18 +37,8 @@ export function isRunningFromAgent(options: DetectAgentOptions = {}): boolean {
   return detectAgent(options).detected;
 }
 
-export function createDefaultStrategies(experimentalProcessTree = false): readonly DetectionStrategy[] {
-  return defaultStrategies(experimentalProcessTree);
-}
-
-function defaultStrategies(experimentalProcessTree = false): readonly DetectionStrategy[] {
-  const strategies: DetectionStrategy[] = [new EnvironmentDetectionStrategy()];
-
-  if (experimentalProcessTree) {
-    strategies.push(new ProcessTreeDetectionStrategy());
-  }
-
-  return strategies;
+export function createDefaultStrategies(): readonly DetectionStrategy[] {
+  return [new EnvironmentDetectionStrategy()];
 }
 
 function selectBestAgent(

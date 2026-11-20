@@ -5,11 +5,6 @@ export {
   isRunningFromAgent
 } from "./detector.js";
 export { EnvironmentDetectionStrategy } from "./strategies/environment.js";
-export {
-  ProcessTreeDetectionStrategy,
-  PsProcessReader,
-  type ProcessReader
-} from "./strategies/process-tree.js";
 export type {
   AgentDefinition,
   AgentId,
@@ -22,7 +17,5 @@ export type {
   DetectionStrategy,
   DetectionStrategyName,
   EnvSignal,
-  EnvValueMatcher,
-  ProcessInfo,
-  ProcessSignal
+  EnvValueMatcher
 } from "./types.js";
