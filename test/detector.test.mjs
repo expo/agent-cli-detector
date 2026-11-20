@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   createDefaultStrategies,
+  defaultAgents,
+  defaultHosts,
   detectAgent,
   EnvironmentDetectionStrategy
 } from "../dist/index.js";
@@ -17,7 +19,7 @@ test("detects an agent from a strong environment variable", () => {
   assert.equal(result.agent.id, "claude-code");
 });
 
-test("detects Claude Cowork before Claude Code and normalizes its session id", () => {
+test("detects Claude Cowork as the host of Claude Code", () => {
   const result = detectAgent({
     env: {
       CLAUDECODE: "1",
@@ -26,15 +28,33 @@ test("detects Claude Cowork before Claude Code and normalizes its session id", (
     }
   });
 
-  assert.equal(result.detected, true);
-  assert.deepEqual(result.agent, {
-    id: "claude-cowork",
-    name: "Claude Cowork",
-    sessionId: "session-123"
+  assert.deepEqual(result, {
+    detected: true,
+    agent: {
+      id: "claude-code",
+      name: "Claude Code",
+      sessionId: "session-123"
+    },
+    host: {
+      id: "claude-cowork",
+      name: "Claude Cowork"
+    }
   });
 });
 
-test("detects Claude Code without Cowork signals", () => {
+test("detects Claude Code from the Cowork signal alone", () => {
+  const result = detectAgent({
+    env: {
+      CLAUDE_CODE_IS_COWORK: "1"
+    }
+  });
+
+  assert.equal(result.detected, true);
+  assert.equal(result.agent.id, "claude-code");
+  assert.equal(result.host.id, "claude-cowork");
+});
+
+test("detects Claude Code without a host", () => {
   const result = detectAgent({
     env: {
       CLAUDECODE: "1",
@@ -42,11 +62,179 @@ test("detects Claude Code without Cowork signals", () => {
     }
   });
 
-  assert.equal(result.detected, true);
-  assert.deepEqual(result.agent, {
-    id: "claude-code",
-    name: "Claude Code",
-    sessionId: "session-123"
+  assert.deepEqual(result, {
+    detected: true,
+    agent: {
+      id: "claude-code",
+      name: "Claude Code",
+      sessionId: "session-123"
+    }
+  });
+  assert.equal("host" in result, false);
+});
+
+test("detects T3 Code as the host of Claude Code", () => {
+  const result = detectAgent({
+    env: {
+      CLAUDECODE: "1",
+      CLAUDE_CODE_ENTRYPOINT: "t3-code",
+      CLAUDE_CODE_SESSION_ID: "session-123",
+      T3CODE_CLI_PATH: "/Applications/T3 Code.app/Contents/Resources/bin/t3",
+      T3CODE_DESKTOP_HOST_SCOPE: "scope-789",
+      T3CODE_THREAD_ID: "thread-456"
+    }
+  });
+
+  assert.deepEqual(result, {
+    detected: true,
+    agent: {
+      id: "claude-code",
+      name: "Claude Code",
+      sessionId: "session-123"
+    },
+    host: {
+      id: "t3-code",
+      name: "T3 Code",
+      sessionId: "thread-456"
+    }
+  });
+});
+
+test("detects T3 Code from the Claude Code entrypoint alone", () => {
+  const result = detectAgent({
+    env: {
+      CLAUDECODE: "1",
+      CLAUDE_CODE_ENTRYPOINT: "t3-code"
+    }
+  });
+
+  assert.deepEqual(result.host, {
+    id: "t3-code",
+    name: "T3 Code"
+  });
+});
+
+test("does not detect a host from other Claude Code entrypoints", () => {
+  const result = detectAgent({
+    env: {
+      CLAUDECODE: "1",
+      CLAUDE_CODE_ENTRYPOINT: "cli"
+    }
+  });
+
+  assert.equal(result.agent.id, "claude-code");
+  assert.equal(result.host, undefined);
+});
+
+test("detects T3 Code as the host of Codex", () => {
+  const result = detectAgent({
+    env: {
+      // T3 Code passes its own Claude Agent SDK variable to Codex too.
+      CLAUDE_AGENT_SDK_VERSION: "0.0.0",
+      CODEX_CI: "1",
+      CODEX_INTERNAL_ORIGINATOR_OVERRIDE: "T3 Code",
+      CODEX_SESSION_ID: "codex-session-123",
+      CODEX_THREAD_ID: "codex-thread-123",
+      T3CODE_CLI_PATH: "/Applications/T3 Code.app/Contents/Resources/bin/t3",
+      T3CODE_DESKTOP_HOST_SCOPE: "scope-789",
+      T3CODE_THREAD_ID: "thread-456"
+    }
+  });
+
+  assert.deepEqual(result, {
+    detected: true,
+    agent: {
+      id: "codex",
+      name: "Codex",
+      sessionId: "codex-thread-123"
+    },
+    host: {
+      id: "t3-code",
+      name: "T3 Code",
+      sessionId: "thread-456"
+    }
+  });
+});
+
+test("detects T3 Code from the Codex originator alone", () => {
+  const result = detectAgent({
+    env: {
+      CODEX_THREAD_ID: "codex-thread-123",
+      CODEX_INTERNAL_ORIGINATOR_OVERRIDE: "T3 Code"
+    }
+  });
+
+  assert.equal(result.agent.id, "codex");
+  assert.deepEqual(result.host, {
+    id: "t3-code",
+    name: "T3 Code"
+  });
+});
+
+test("detects Conductor as the host of Claude Code", () => {
+  const result = detectAgent({
+    env: {
+      CLAUDECODE: "1",
+      CLAUDE_CODE_SESSION_ID: "session-123",
+      CONDUCTOR_DEFAULT_BRANCH: "main",
+      CONDUCTOR_IS_LOCAL: "1",
+      CONDUCTOR_ROOT_PATH: "/Users/me/repo",
+      CONDUCTOR_SESSION_ID: "conductor-session-123",
+      CONDUCTOR_WORKSPACE_ID: "workspace-123",
+      CONDUCTOR_WORKSPACE_NAME: "lisbon",
+      CONDUCTOR_WORKSPACE_PATH: "/Users/me/conductor/workspaces/repo/lisbon"
+    }
+  });
+
+  assert.deepEqual(result, {
+    detected: true,
+    agent: {
+      id: "claude-code",
+      name: "Claude Code",
+      sessionId: "session-123"
+    },
+    host: {
+      id: "conductor",
+      name: "Conductor",
+      sessionId: "conductor-session-123"
+    }
+  });
+});
+
+test("does not detect Conductor when it runs Codex", () => {
+  // Conductor starts Codex without its CONDUCTOR_* variables.
+  const result = detectAgent({
+    env: {
+      CODEX_CI: "1",
+      CODEX_SESSION_ID: "codex-session-123",
+      CODEX_THREAD_ID: "codex-thread-123"
+    }
+  });
+
+  assert.deepEqual(result, {
+    detected: true,
+    agent: {
+      id: "codex",
+      name: "Codex",
+      sessionId: "codex-thread-123"
+    }
+  });
+});
+
+test("reports a host without an agent", () => {
+  const result = detectAgent({
+    env: {
+      T3CODE_THREAD_ID: "thread-456"
+    }
+  });
+
+  assert.deepEqual(result, {
+    detected: false,
+    host: {
+      id: "t3-code",
+      name: "T3 Code",
+      sessionId: "thread-456"
+    }
   });
 });
 
@@ -288,8 +476,7 @@ test("does not detect unrelated environment variables", () => {
     }
   });
 
-  assert.equal(result.detected, false);
-  assert.equal(result.agent, undefined);
+  assert.deepEqual(result, { detected: false });
 });
 
 test("custom agents can be added without custom detector code", () => {
@@ -309,4 +496,57 @@ test("custom agents can be added without custom detector code", () => {
 
   assert.equal(result.detected, true);
   assert.equal(result.agent.id, "example-agent");
+});
+
+test("custom hosts can be added without custom detector code", () => {
+  const result = detectAgent({
+    hosts: [
+      ...defaultHosts,
+      {
+        id: "example-host",
+        name: "Example Host",
+        env: [{ name: "EXAMPLE_HOST_THREAD_ID" }],
+        sessionEnv: ["EXAMPLE_HOST_THREAD_ID"]
+      }
+    ],
+    env: {
+      CODEX_CI: "1",
+      EXAMPLE_HOST_THREAD_ID: "thread-123"
+    }
+  });
+
+  assert.equal(result.agent.id, "codex");
+  assert.deepEqual(result.host, {
+    id: "example-host",
+    name: "Example Host",
+    sessionId: "thread-123"
+  });
+});
+
+test("custom strategies can report hosts", () => {
+  const result = detectAgent({
+    env: {},
+    strategies: [
+      {
+        name: "custom",
+        detect() {
+          return [
+            { agent: { id: "codex", name: "Codex" }, strategy: "custom", signal: "test" },
+            { host: { id: "t3-code", name: "T3 Code" }, strategy: "custom", signal: "test" }
+          ];
+        }
+      }
+    ]
+  });
+
+  assert.equal(result.agent.id, "codex");
+  assert.equal(result.host.id, "t3-code");
+});
+
+test("no agent definition uses the id of a host", () => {
+  const hostIds = new Set(defaultHosts.map((host) => host.id));
+
+  for (const agent of defaultAgents) {
+    assert.equal(hostIds.has(agent.id), false, `${agent.id} is both an agent and a host`);
+  }
 });

@@ -1,35 +1,36 @@
 import { defaultAgents } from "./agents.js";
+import { defaultHosts } from "./hosts.js";
 import { EnvironmentDetectionStrategy } from "./strategies/environment.js";
 import type {
   AgentDefinition,
   DetectAgentOptions,
   DetectedAgent,
+  DetectedHost,
   DetectionContext,
   DetectionEvidence,
   DetectionResult,
-  DetectionStrategy
+  DetectionStrategy,
+  HostDefinition
 } from "./types.js";
 
 export function detectAgent(options: DetectAgentOptions = {}): DetectionResult {
   const agents = options.agents ?? defaultAgents;
+  const hosts = options.hosts ?? defaultHosts;
   const strategies = options.strategies ?? createDefaultStrategies();
   const context: DetectionContext = {
     env: options.env ?? process.env,
-    agents
+    agents,
+    hosts
   };
 
   const matches = strategies.flatMap((strategy) => strategy.detect(context));
-  const bestMatch = selectBestAgent(agents, matches, context.env);
-
-  if (bestMatch === undefined) {
-    return {
-      detected: false
-    };
-  }
+  const agent = selectBest(agents, agentIds(matches), context.env);
+  const host = selectBest(hosts, hostIds(matches), context.env);
 
   return {
-    detected: true,
-    agent: bestMatch
+    detected: agent !== undefined,
+    ...(agent === undefined ? {} : { agent }),
+    ...(host === undefined ? {} : { host })
   };
 }
 
@@ -41,33 +42,41 @@ export function createDefaultStrategies(): readonly DetectionStrategy[] {
   return [new EnvironmentDetectionStrategy()];
 }
 
-function selectBestAgent(
-  agents: readonly AgentDefinition[],
-  matches: readonly DetectionEvidence[],
+function agentIds(matches: readonly DetectionEvidence[]): ReadonlySet<string> {
+  return new Set(matches.flatMap((match) => (match.agent === undefined ? [] : [match.agent.id])));
+}
+
+function hostIds(matches: readonly DetectionEvidence[]): ReadonlySet<string> {
+  return new Set(matches.flatMap((match) => (match.host === undefined ? [] : [match.host.id])));
+}
+
+/**
+ * Returns the first definition in list order that has evidence.
+ * The list order sets the priority between definitions.
+ */
+function selectBest(
+  definitions: readonly (AgentDefinition | HostDefinition)[],
+  matchedIds: ReadonlySet<string>,
   env: NodeJS.ProcessEnv
-): DetectedAgent | undefined {
-  const matchedAgentIds = new Set(matches.map((match) => match.agent.id));
+): DetectedAgent | DetectedHost | undefined {
+  const definition = definitions.find((candidate) => matchedIds.has(candidate.id));
 
-  for (const agent of agents) {
-    if (!matchedAgentIds.has(agent.id)) {
-      continue;
-    }
-
-    return {
-      id: agent.id,
-      name: agent.name,
-      ...sessionIdProperties(agent, env)
-    };
+  if (definition === undefined) {
+    return undefined;
   }
 
-  return undefined;
+  return {
+    id: definition.id,
+    name: definition.name,
+    ...sessionIdProperties(definition.sessionEnv, env)
+  };
 }
 
 function sessionIdProperties(
-  agent: AgentDefinition,
+  sessionEnv: readonly string[] | undefined,
   env: NodeJS.ProcessEnv
 ): { readonly sessionId?: string } {
-  for (const envName of agent.sessionEnv ?? []) {
+  for (const envName of sessionEnv ?? []) {
     const value = env[envName];
 
     if (value !== undefined && value.length > 0) {

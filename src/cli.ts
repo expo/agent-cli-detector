@@ -17,10 +17,12 @@ const result = detectAgent();
 if (json) {
   console.log(JSON.stringify(toJsonResult(result), null, 2));
 } else if (!quiet) {
+  const hostSuffix = result.host === undefined ? "" : ` (host: ${result.host.name})`;
+
   if (result.detected && result.agent !== undefined) {
-    console.log(`detected: ${result.agent.name}`);
+    console.log(`detected: ${result.agent.name}${hostSuffix}`);
   } else {
-    console.log("no coding agent detected");
+    console.log(`no coding agent detected${hostSuffix}`);
   }
 }
 
@@ -29,7 +31,8 @@ process.exit(result.detected ? 0 : 1);
 function printHelp(): void {
   console.log(`Usage: detect-agent [--json] [--quiet]
 
-Detect whether the current process is running inside a coding agent.
+Detect whether the current process is running inside a coding agent,
+and which app (host) runs that agent.
 
 Options:
   --json    Print the full detection result as JSON
@@ -48,6 +51,13 @@ function toJsonResult(result: DetectionResult): object {
           id: result.agent.id,
           name: result.agent.name,
           sessionId: result.agent.sessionId
+        },
+    host: result.host === undefined
+      ? undefined
+      : {
+          id: result.host.id,
+          name: result.host.name,
+          sessionId: result.host.sessionId
         }
   };
 }

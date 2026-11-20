@@ -1,7 +1,7 @@
 {
   "name": "agent-cli-detector",
-  "version": "0.1.8",
-  "description": "Detect whether a JavaScript CLI is running inside a coding agent.",
+  "version": "0.2.0",
+  "description": "Detect whether a JavaScript CLI is running inside a coding agent, and which app hosts that agent.",
   "type": "module",
   "sideEffects": false,
   "main": "./dist/index.cjs",
@@ -42,7 +42,8 @@
     "detection",
     "codex",
     "claude",
-    "opencode"
+    "opencode",
+    "t3-code"
   ],
   "license": "MIT",
   "devDependencies": {

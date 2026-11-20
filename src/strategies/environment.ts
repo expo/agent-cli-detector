@@ -4,7 +4,8 @@ import type {
   DetectionEvidence,
   DetectionStrategy,
   EnvSignal,
-  EnvValueMatcher
+  EnvValueMatcher,
+  HostDefinition
 } from "../types.js";
 
 export class EnvironmentDetectionStrategy implements DetectionStrategy {
@@ -14,19 +15,36 @@ export class EnvironmentDetectionStrategy implements DetectionStrategy {
     const matches: DetectionEvidence[] = [];
 
     for (const agent of context.agents) {
-      for (const signal of agent.env ?? []) {
-        const value = context.env[signal.name];
+      for (const { signal, value } of matchEnv(agent, context.env)) {
+        matches.push({ agent: { id: agent.id, name: agent.name }, ...toEvidence(signal, value) });
+      }
+    }
 
-        if (value === undefined || !matchesEnvValue(value, signal.value)) {
-          continue;
-        }
-
-        matches.push(toEvidence(agent, signal, value));
+    for (const host of context.hosts ?? []) {
+      for (const { signal, value } of matchEnv(host, context.env)) {
+        matches.push({ host: { id: host.id, name: host.name }, ...toEvidence(signal, value) });
       }
     }
 
     return matches;
   }
+}
+
+function matchEnv(
+  definition: AgentDefinition | HostDefinition,
+  env: NodeJS.ProcessEnv
+): readonly { readonly signal: EnvSignal; readonly value: string }[] {
+  const matches: { signal: EnvSignal; value: string }[] = [];
+
+  for (const signal of definition.env ?? []) {
+    const value = env[signal.name];
+
+    if (value !== undefined && matchesEnvValue(value, signal.value)) {
+      matches.push({ signal, value });
+    }
+  }
+
+  return matches;
 }
 
 function matchesEnvValue(value: string, matcher: EnvValueMatcher | undefined): boolean {
@@ -45,12 +63,8 @@ function matchesEnvValue(value: string, matcher: EnvValueMatcher | undefined): b
   return matcher(value);
 }
 
-function toEvidence(agent: AgentDefinition, signal: EnvSignal, value: string): DetectionEvidence {
+function toEvidence(signal: EnvSignal, value: string) {
   return {
-    agent: {
-      id: agent.id,
-      name: agent.name
-    },
     strategy: "environment",
     signal: signal.name,
     value
