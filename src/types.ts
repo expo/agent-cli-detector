@@ -13,13 +13,14 @@ export type AgentId =
   | "kiro"
   | "kilocode"
   | "claude-code"
-  | "claude-cowork"
   | "muse"
   | "muse-agent"
   | "opencode"
   | "pi"
   | "replit"
   | "rork";
+
+export type HostId = "claude-cowork" | "conductor" | "t3-code";
 
 export type DetectionStrategyName = "environment";
 
@@ -48,21 +49,52 @@ export interface AgentDefinition extends AgentIdentity {
   readonly sessionEnv?: readonly string[];
 }
 
-export interface DetectionEvidence {
-  readonly agent: AgentIdentity;
+/**
+ * The app the user works in, which runs the agent harness.
+ * For example, T3 Code or Conductor running Claude Code or Codex.
+ */
+export interface HostIdentity {
+  readonly id: HostId | string;
+  readonly name: string;
+}
+
+export interface DetectedHost extends HostIdentity {
+  readonly sessionId?: string;
+}
+
+export interface HostDefinition extends HostIdentity {
+  readonly env?: readonly EnvSignal[];
+  readonly sessionEnv?: readonly string[];
+}
+
+interface DetectionEvidenceBase {
   readonly strategy: DetectionStrategyName | string;
   readonly signal: string;
   readonly value?: string;
 }
 
+export interface AgentEvidence extends DetectionEvidenceBase {
+  readonly agent: AgentIdentity;
+  readonly host?: never;
+}
+
+export interface HostEvidence extends DetectionEvidenceBase {
+  readonly host: HostIdentity;
+  readonly agent?: never;
+}
+
+export type DetectionEvidence = AgentEvidence | HostEvidence;
+
 export interface DetectionResult {
   readonly detected: boolean;
   readonly agent?: DetectedAgent;
+  readonly host?: DetectedHost;
 }
 
 export interface DetectionContext {
   readonly env: NodeJS.ProcessEnv;
   readonly agents: readonly AgentDefinition[];
+  readonly hosts: readonly HostDefinition[];
 }
 
 export interface DetectionStrategy {
@@ -73,5 +105,6 @@ export interface DetectionStrategy {
 export interface DetectAgentOptions {
   readonly env?: NodeJS.ProcessEnv;
   readonly agents?: readonly AgentDefinition[];
+  readonly hosts?: readonly HostDefinition[];
   readonly strategies?: readonly DetectionStrategy[];
 }

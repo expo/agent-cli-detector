@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
+import { defaultAgents, defaultHosts } from "../dist/index.js";
 
 const projectRoot = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 
@@ -108,11 +109,10 @@ test("packed package can be installed, imported, and run as a CLI", () => {
     const binPath = path.join(workspace, "node_modules/agent-cli-detector", installedPackage.bin["agent-cli-detector"]);
     const cliOutput = execFileSync(process.execPath, [binPath, "--json"], {
       cwd: workspace,
-      env: {
-        ...process.env,
+      env: envWithoutSignals({
         CODEX_CI: "1",
-        CODEX_THREAD_ID: ""
-      },
+        T3CODE_THREAD_ID: "thread-456"
+      }),
       encoding: "utf8"
     });
 
@@ -121,12 +121,46 @@ test("packed package can be installed, imported, and run as a CLI", () => {
       agent: {
         id: "codex",
         name: "Codex"
+      },
+      host: {
+        id: "t3-code",
+        name: "T3 Code",
+        sessionId: "thread-456"
       }
     });
+
+    const cliTextOutput = execFileSync(process.execPath, [binPath], {
+      cwd: workspace,
+      env: envWithoutSignals({
+        CODEX_CI: "1",
+        T3CODE_THREAD_ID: "thread-456"
+      }),
+      encoding: "utf8"
+    });
+
+    assert.equal(cliTextOutput.trim(), "detected: Codex (host: T3 Code)");
   } finally {
     rmSync(workspace, { recursive: true, force: true });
   }
 });
+
+// Removes the agent and host signals of the current shell, so that the
+// result depends only on the variables that the test sets.
+function envWithoutSignals(overrides) {
+  const env = { ...process.env };
+
+  for (const definition of [...defaultAgents, ...defaultHosts]) {
+    for (const signal of definition.env ?? []) {
+      delete env[signal.name];
+    }
+
+    for (const name of definition.sessionEnv ?? []) {
+      delete env[name];
+    }
+  }
+
+  return { ...env, ...overrides };
+}
 
 function execNpm(args, options) {
   if (process.env.npm_execpath !== undefined) {
