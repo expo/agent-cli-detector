@@ -21,7 +21,7 @@ export type AgentId =
   | "replit"
   | "rork";
 
-export type DetectionStrategyName = "environment" | "process-tree";
+export type DetectionStrategyName = "environment";
 
 export type EnvValueMatcher =
   | string
@@ -31,11 +31,6 @@ export type EnvValueMatcher =
 export interface EnvSignal {
   readonly name: string;
   readonly value?: EnvValueMatcher;
-  readonly description?: string;
-}
-
-export interface ProcessSignal {
-  readonly pattern: RegExp;
   readonly description?: string;
 }
 
@@ -50,14 +45,7 @@ export interface DetectedAgent extends AgentIdentity {
 
 export interface AgentDefinition extends AgentIdentity {
   readonly env?: readonly EnvSignal[];
-  readonly process?: readonly ProcessSignal[];
   readonly sessionEnv?: readonly string[];
-}
-
-export interface ProcessInfo {
-  readonly pid: number;
-  readonly ppid?: number;
-  readonly command: string;
 }
 
 export interface DetectionEvidence {
@@ -74,9 +62,7 @@ export interface DetectionResult {
 
 export interface DetectionContext {
   readonly env: NodeJS.ProcessEnv;
-  readonly pid: number;
   readonly agents: readonly AgentDefinition[];
-  readonly maxProcessDepth: number;
 }
 
 export interface DetectionStrategy {
@@ -86,9 +72,6 @@ export interface DetectionStrategy {
 
 export interface DetectAgentOptions {
   readonly env?: NodeJS.ProcessEnv;
-  readonly pid?: number;
   readonly agents?: readonly AgentDefinition[];
   readonly strategies?: readonly DetectionStrategy[];
-  readonly experimentalProcessTree?: boolean;
-  readonly maxProcessDepth?: number;
 }

@@ -9,7 +9,6 @@ export const defaultAgents = [
       { name: "CODEX_SHELL", value: "1" },
       { name: "CODEX_THREAD_ID" }
     ],
-    process: [{ pattern: /^codex$/i }],
     sessionEnv: ["CODEX_THREAD_ID"]
   },
   {
@@ -28,7 +27,6 @@ export const defaultAgents = [
       { name: "CURSOR_AGENT", value: "1" },
       { name: "CURSOR_CONVERSATION_ID" }
     ],
-    process: [{ pattern: /^cursor$/i }],
     sessionEnv: ["CURSOR_CONVERSATION_ID"]
   },
   {
@@ -44,7 +42,6 @@ export const defaultAgents = [
       { name: "CLAUDECODE", value: "1" },
       { name: "CLAUDE_CODE_SESSION_ID" }
     ],
-    process: [{ pattern: /^claude$/i }],
     sessionEnv: ["CLAUDE_CODE_SESSION_ID"]
   },
   {
@@ -53,13 +50,15 @@ export const defaultAgents = [
     env: [
       { name: "OPENCODE", value: "1" },
       { name: "OPENCODE_PID" }
-    ],
-    process: [{ pattern: /^opencode$/i }]
+    ]
   },
   {
     id: "devin",
     name: "Devin",
-    process: [{ pattern: /devin/i }]
+    env: [
+      { name: "DEVIN_DIR" },
+      { name: "DEVIN_DISABLE_HISTEXPAND" }
+    ]
   },
   {
     id: "droid",
@@ -69,8 +68,7 @@ export const defaultAgents = [
   {
     id: "gemini",
     name: "Gemini CLI",
-    env: [{ name: "GEMINI_CLI", value: "1" }],
-    process: [{ pattern: /^gemini$/i }]
+    env: [{ name: "GEMINI_CLI", value: "1" }]
   },
   {
     id: "grok",
@@ -88,7 +86,6 @@ export const defaultAgents = [
       { name: "ANTIGRAVITY_AGENT", value: "1" },
       { name: "ANTIGRAVITY_TRAJECTORY_ID" }
     ],
-    process: [{ pattern: /^antigravity$/i }],
     sessionEnv: ["ANTIGRAVITY_TRAJECTORY_ID"]
   },
   {
@@ -120,7 +117,6 @@ export const defaultAgents = [
     id: "kiro",
     name: "Kiro",
     env: [{ name: "KIRO_SESSION_ID" }],
-    process: [{ pattern: /kiro/i }],
     sessionEnv: ["KIRO_SESSION_ID"]
   },
   {
@@ -140,8 +136,7 @@ export const defaultAgents = [
   {
     id: "cline",
     name: "Cline",
-    env: [{ name: "CLINE_WRAPPER_PATH" }],
-    process: [{ pattern: /^cline$/i }]
+    env: [{ name: "CLINE_WRAPPER_PATH" }]
   },
   {
     id: "kilocode",
@@ -151,7 +146,6 @@ export const defaultAgents = [
       { name: "KILOCODE_VERSION" },
       { name: "KILO_RUN_ID" }
     ],
-    process: [{ pattern: /^(kilo|kilocode)$/i }],
     sessionEnv: ["KILO_RUN_ID"]
   },
   {
@@ -162,7 +156,6 @@ export const defaultAgents = [
       { name: "COPILOT_AGENT_SESSION_ID" },
       { name: "COPILOT_RUN_APP", value: "1" }
     ],
-    process: [{ pattern: /^(github-copilot-cli|copilot)$/i }],
     sessionEnv: ["COPILOT_AGENT_SESSION_ID"]
   }
 ] satisfies readonly AgentDefinition[];
